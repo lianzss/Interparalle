@@ -34,7 +34,7 @@
 		<link>
 			<name>assets</name>
 			<type>2</type>
-			<location>G:/Metaio SDK 6.0.1/templatesContent_crossplatform</location>
+			<locationURI>PARENT-3-PROJECT_LOC/templatesContent_crossplatform</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>

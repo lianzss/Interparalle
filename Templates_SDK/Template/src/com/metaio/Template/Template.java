@@ -30,8 +30,6 @@ public class Template extends ARViewActivity
 	private MetaioSDKCallbackHandler mSDKCallback;
 	private VisualSearchCallbackHandler mVisualSearchCallback;
 	
-	private IGeometry mModel;
-	
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) 
@@ -77,24 +75,6 @@ public class Template extends ARViewActivity
 			// Assigning tracking configuration
 			boolean result = metaioSDK.setTrackingConfiguration(trackingConfigFile); 
 			MetaioDebug.log("Tracking data loaded: " + result); 
-			
-//			final float scale = 5.f;
-//			final Rotation rotation = new Rotation(new Vector3d(-(float)Math.PI/2f, 0.0f, 0.0f));
-//			
-//			final File metaioManModel = AssetsManager.getAssetPathAsFile(getApplicationContext(),"metaioman.md2");
-//			if(metaioManModel != null)
-//			{
-//				mModel = metaioSDK.createGeometry(metaioManModel);
-//				if (mModel != null) 
-//				{
-//					// Set geometry properties
-//					mModel.setScale(scale);
-//					mModel.setRotation(rotation);
-//					
-//				}
-//				else
-//					MetaioDebug.log(Log.ERROR, "Error loading earth geometry: " + mEarth);
-//			}
 			
 			final float scale = 11.f;
 			final Rotation rotation = new Rotation(new Vector3d((float)Math.PI/2, 0.0f, 0.0f));
