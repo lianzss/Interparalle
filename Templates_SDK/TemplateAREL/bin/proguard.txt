@@ -1,8 +1,8 @@
 # view AndroidManifest.xml #generated:70
--keep class com.metaio.TemplateAREL.ARELViewActivity { <init>(...); }
+-keep class com.interparalle.interparaplle.ARELViewActivity { <init>(...); }
 
 # view AndroidManifest.xml #generated:59
--keep class com.metaio.TemplateAREL.MainActivity { <init>(...); }
+-keep class com.interparalle.interparaplle.MainActivity { <init>(...); }
 
 # view res/layout/poiactivity.xml #generated:6
 -keep class com.metaio.cloud.plugin.view.POIDetailFragment { <init>(...); }
