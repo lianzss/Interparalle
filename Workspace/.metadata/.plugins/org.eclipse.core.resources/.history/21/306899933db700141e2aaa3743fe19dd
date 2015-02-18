@@ -1,0 +1,11 @@
+package com.interparalle.Util;
+
+
+/*make sure the application can access the SD card and the network function is accessable.
+ * Note: the permission must be set, otherwise the class can't work correctly.
+ * 
+ * 
+ * */
+public class DownLoad {
+
+}

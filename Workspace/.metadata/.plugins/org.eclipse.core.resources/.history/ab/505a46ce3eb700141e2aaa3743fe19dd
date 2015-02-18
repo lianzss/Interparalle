@@ -1,0 +1,37 @@
+package com.interparalle.Util;
+
+import java.net.HttpURLConnection;
+import java.net.URL;
+
+import org.apache.http.HttpConnection;
+
+/*make sure the application can access the SD card and the network function is accessable.
+ * Note: the permission must be set, otherwise the class can't work correctly. 
+ * INTERNET&WRITE_EXTERNAL_STORAGE
+ */
+public class DownLoad {
+	
+	//the http string url
+	private String stringurl;
+	
+	//the http URL url
+	private URL urlurl;
+	
+	//sd card path
+	private String sdcard;
+	
+	//http connection
+	private HttpURLConnection con;
+	
+	public DownLoad(String url)
+	{
+		this.stringurl =  url;
+		
+	}
+	
+	public DownLoad(URL url)
+	{
+		
+	}
+
+}
