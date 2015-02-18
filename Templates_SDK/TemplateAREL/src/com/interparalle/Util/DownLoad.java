@@ -5,6 +5,9 @@ import java.net.URL;
 import java.io.InputStream;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 import org.apache.http.HttpConnection;
 
@@ -31,6 +34,11 @@ public class DownLoad {
 	//sd card path
 	private String sdcard;
 	
+	//dir path
+	private String dirpath;
+	//file name
+	private String savefilename;
+	
 	//http connection
 	private HttpURLConnection httpcon;
 	
@@ -50,6 +58,7 @@ public class DownLoad {
 		{
 			Log.e(CLASS_FLAG,"SD card not ready!");
 			this.stringurl = null;
+			this.urlurl = null;
 			this.sdcard = null;
 			return;
 		}
@@ -143,14 +152,67 @@ public class DownLoad {
 		
 	}
 	
-	public void DowLoad2Local(String path,String filename, DownLoadHandler handler)
+	public void DowLoad2Local(String dir,String filename, DownLoadHandler handler)
 	{
+		
+		dirpath = dir;
+		savefilename = filename;
 		DLthread = new Thread(new Runnable() {
 			
 			@Override
 			public void run() {
 				// TODO Auto-generated method stub
+				StringBuilder sb = new StringBuilder(dirpath); 
+				File file = new File(sb.toString());  
+				if (!file.exists()) 
+				{  
+					if(!file.mkdirs())
+					{
+						Log.e(CLASS_FLAG, "create dirs failed");
+						return;
+					}
+					//create dir
+					Log.d(CLASS_FLAG, "create "+sb.toString()+" dir successfully!");  
+				}  
 				
+				//get the file handle
+				sb.append(savefilename);
+				file = new File(sb.toString());  
+				
+				FileOutputStream fos = null;  
+				try 
+				{  
+					InputStream is = httpcon.getInputStream();  
+					
+					//create a new file
+					if(!file.exists())
+					{							
+						if(file.createNewFile())
+						{
+							Log.d(CLASS_FLAG, "create "+sb.toString()+" successfully!");
+						}else
+						{
+							Log.e(CLASS_FLAG, "create "+sb.toString()+" failed!");
+						}
+					}
+					
+					fos = new FileOutputStream(file);  
+					byte[] buf = new byte[1024];  
+					while ((is.read(buf)) != -1) 
+					{  
+					    fos.write(buf);   
+					}  
+					is.close();  
+				} catch (Exception e) {  
+					return ;  
+				} finally {  
+					try {  
+					    fos.close();  
+					} catch (IOException e) {  
+					    e.printStackTrace();  
+					}  
+				}  
+				return;				
 			}
 		});
 		
@@ -166,6 +228,11 @@ public class DownLoad {
 		}
 		
 		DLthread.destroy();		
+	}
+	
+	public int GetHttpContentLenth()
+	{
+		return httpcon.getContentLength();
 	}
 	
 	public abstract class DownLoadHandler  
