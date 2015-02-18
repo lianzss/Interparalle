@@ -1,0 +1,3 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">&#x0A;<refactoring comment="Delete resource &apos;metaioSDK&apos;" deleteContents="false" description="Delete resource &apos;metaioSDK&apos;" element1="/metaioSDK" flags="7" id="org.eclipse.ltk.core.refactoring.delete.resources" resources="1" stamp="1424225420878"/>&#x0A;<refactoring comment="Delete resource &apos;metaioSDK&apos;" deleteContents="false" description="Delete resource &apos;metaioSDK&apos;" element1="/metaioSDK" flags="7" id="org.eclipse.ltk.core.refactoring.delete.resources" resources="1" stamp="1424229465952"/>
+</session>
