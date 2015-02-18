@@ -9,11 +9,11 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import org.apache.http.HttpConnection;
-
-import android.content.res.Resources.NotFoundException;
+import android.app.Application;
 import android.os.Environment;
 import android.util.Log;
+
+import com.interparalle.Util.ContextUtil;
 
 
 /*make sure the application can access the SD card and the network function is accessable.
@@ -44,6 +44,9 @@ public class DownLoad {
 	
 	//download thread
 	private Thread DLthread;
+	
+	//download handler
+	private DownLoadHandler downloadhandler;
 	
 	public DownLoad(String url)
 	{
@@ -152,10 +155,87 @@ public class DownLoad {
 		
 	}
 	
+	/*dowload to sd card.
+	 * 
+	 * */
+	
+	public void DowLoad2Sd(String dir,String filename, DownLoadHandler handler)
+	{
+		
+		dirpath = sdcard+dir;
+		savefilename = filename;
+		downloadhandler = handler;
+		DLthread = new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				StringBuilder sb = new StringBuilder(dirpath); 
+				File file = new File(sb.toString());  
+				if (!file.exists()) 
+				{  
+					if(!file.mkdirs())
+					{
+						Log.e(CLASS_FLAG, "create dirs failed");
+						return;
+					}
+					//create dir
+					Log.d(CLASS_FLAG, "create "+sb.toString()+" dir successfully!");  
+				}  
+				
+				//get the file handle
+				sb.append(savefilename);
+				file = new File(sb.toString());  
+				
+				FileOutputStream fos = null;  
+				try 
+				{  
+					InputStream is = httpcon.getInputStream();  
+					
+					//create a new file
+					if(!file.exists())
+					{							
+						if(file.createNewFile())
+						{
+							Log.d(CLASS_FLAG, "create "+sb.toString()+" successfully!");
+						}else
+						{
+							Log.e(CLASS_FLAG, "create "+sb.toString()+" failed!");
+						}
+					}
+					
+					fos = new FileOutputStream(file);  
+					byte[] buf = new byte[1024];  
+					while ((is.read(buf)) != -1) 
+					{  
+					    fos.write(buf);
+					    downloadhandler.setSize(buf.length);
+					}  
+					is.close();
+					downloadhandler.downloadfinish();
+				} catch (Exception e) {  
+					return ;  
+				} finally {  
+					try {  
+					    fos.close();  
+					} catch (IOException e) {  
+					    e.printStackTrace();  
+					}  
+				}  
+				return;				
+			}
+		});
+		
+		DLthread.start();
+	}
+	
+	/*download to local(not only in sd card)
+	 * NOTE: the dirpath must in the application dir, otherwise the system will forbit the operation
+	 * */
 	public void DowLoad2Local(String dir,String filename, DownLoadHandler handler)
 	{
 		
-		dirpath = dir;
+		dirpath = ContextUtil.getContext().getApplicationContext().getFilesDir()+dir;
 		savefilename = filename;
 		DLthread = new Thread(new Runnable() {
 			
@@ -200,9 +280,11 @@ public class DownLoad {
 					byte[] buf = new byte[1024];  
 					while ((is.read(buf)) != -1) 
 					{  
-					    fos.write(buf);   
+					    fos.write(buf);
+					    downloadhandler.setSize(buf.length);
 					}  
-					is.close();  
+					is.close();
+					downloadhandler.downloadfinish();
 				} catch (Exception e) {  
 					return ;  
 				} finally {  
@@ -218,6 +300,7 @@ public class DownLoad {
 		
 		DLthread.start();
 	}
+	
 	
 	@SuppressWarnings("deprecation")
 	public void Cancel2Local()

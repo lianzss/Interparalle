@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.Gravity;
 import android.widget.Toast;
 
+import com.interparalle.Util.ContextUtil;
 import com.metaio.sdk.ARELActivity;
 import com.metaio.sdk.MetaioDebug;
 import com.metaio.tools.io.AssetsManager;

@@ -1,7 +1,10 @@
-# view AndroidManifest.xml #generated:70
+# view AndroidManifest.xml #generated:53
+-keep class com.interparalle.Util.ContextUtil { <init>(...); }
+
+# view AndroidManifest.xml #generated:71
 -keep class com.interparalle.interparaplle.ARELViewActivity { <init>(...); }
 
-# view AndroidManifest.xml #generated:59
+# view AndroidManifest.xml #generated:60
 -keep class com.interparalle.interparaplle.MainActivity { <init>(...); }
 
 # view res/layout/poiactivity.xml #generated:6

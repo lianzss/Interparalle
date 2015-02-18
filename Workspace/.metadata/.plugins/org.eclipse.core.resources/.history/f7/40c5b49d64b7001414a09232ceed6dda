@@ -1,0 +1,8 @@
+package com.interparalle.Util;
+
+import android.app.Application;
+
+public class ContexUtil extends Application {
+	private static ContextUtil instance;
+
+}

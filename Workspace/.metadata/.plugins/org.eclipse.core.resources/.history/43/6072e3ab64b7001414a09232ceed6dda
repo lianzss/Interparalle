@@ -1,0 +1,7 @@
+package com.interparalle.Util;
+
+import android.app.Application;
+
+public class ContextUtil extends Application {
+
+}
