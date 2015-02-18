@@ -303,7 +303,7 @@ public class DownLoad {
 	
 	
 	@SuppressWarnings("deprecation")
-	public void CancelDownLoad()
+	public void Cancel2Local()
 	{
 		if(DLthread.isAlive())
 		{
