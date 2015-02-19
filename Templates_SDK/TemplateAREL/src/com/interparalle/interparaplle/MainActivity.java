@@ -3,13 +3,20 @@ package com.interparalle.interparaplle;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Locale;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.View;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.Toast;
 
 import com.interparalle.Util.ContextUtil;
@@ -17,28 +24,78 @@ import com.metaio.sdk.ARELActivity;
 import com.metaio.sdk.MetaioDebug;
 import com.metaio.tools.io.AssetsManager;
 
+import com.interparalle.Util.DownLoad;
+import com.interparalle.Util.ContextUtil;
+import com.interparalle.Util.DownLoad.DownLoadHandler;
+
 public class MainActivity extends Activity
 {
+
+	final String SERVERINDEXURL = "http://192.168.1.2/";
+	final String RES ="./res";
+	final String ZIPFORMAT = ".zip";
+	
+	WebView mWebView;
 	
 	/**
 	 * Task that will extract all the assets
 	 */
 	private AssetsExtracter mTask;
 	
+	/**
+	 * Progress view
+	 */
+	View mProgress;
+	
+	/**
+	 * True while launching a tutorial, used to prevent
+	 * multiple launches of the tutorial
+	 */
+	boolean mLaunchingTutorial;
+	
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) 
 	{
 		super.onCreate(savedInstanceState);
 		
-		setContentView(R.layout.main);
+		setContentView(R.layout.webview);
 		
 		// Enable metaio SDK debug log messages based on build configuration
 		MetaioDebug.enableLogging(BuildConfig.DEBUG);
+		
+		mProgress = findViewById(R.id.progress);
+		mWebView = (WebView) findViewById(R.id.webview);
 		
 		// extract all the assets
 		mTask = new AssetsExtracter();
 		mTask.execute(0);
 
+	}
+	
+	@Override
+	protected void onResume() 
+	{
+		super.onResume();
+		mWebView.resumeTimers();
+		mLaunchingTutorial = false;
+	}
+	
+	@Override
+	protected void onPause() 
+	{
+		super.onPause();
+		mWebView.pauseTimers();
+	}
+	
+	@Override
+	public void onBackPressed() 
+	{
+		// if web view can go back, go back
+		if (mWebView.canGoBack())
+			mWebView.goBack();
+		else
+			super.onBackPressed();
 	}
 
 	/**
@@ -51,50 +108,123 @@ public class MainActivity extends Activity
 		@Override
 		protected void onPreExecute() 
 		{
+			mProgress.setVisibility(View.VISIBLE);
 		}
 		
 		@Override
 		protected Boolean doInBackground(Integer... params) 
 		{
-			try 
-			{
-				// Extract all assets and overwrite existing files if debug build
-				AssetsManager.extractAllAssets(getApplicationContext(), BuildConfig.DEBUG);
-			} 
-			catch (IOException e) 
-			{
-				MetaioDebug.log(Log.ERROR, "Error extracting assets: "+e.getMessage());
-				MetaioDebug.printStackTrace(Log.ERROR, e);
-				return false;
-			}
-			
+			//todo
 			return true;
 		}
 		
 		@Override
 		protected void onPostExecute(Boolean result) 
 		{
+			mProgress.setVisibility(View.GONE);
+			
 			if (result)
-			{
-				// Start AREL Activity on success
-				final File arelConfigFilePath = AssetsManager.getAssetPathAsFile(getApplicationContext(), "AREL/index.xml");
-				MetaioDebug.log("AREL config to be passed to intent: "+arelConfigFilePath.getPath());
-				Intent intent = new Intent(getApplicationContext(), ARELViewActivity.class);
-				intent.putExtra(getPackageName()+ARELActivity.INTENT_EXTRA_AREL_SCENE, arelConfigFilePath);
-				startActivity(intent);
+			{				
+				WebSettings settings = mWebView.getSettings();
+				
+				settings.setCacheMode(WebSettings.LOAD_NO_CACHE);
+				settings.setJavaScriptEnabled(true);
+				
+				mWebView.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
+				mWebView.setWebViewClient(new WebViewHandler());
+				mWebView.loadUrl(SERVERINDEXURL);
+				mWebView.setVisibility(View.VISIBLE);
 			}
 			else
 			{
-				// Show a toast with an error message
-				Toast toast = Toast.makeText(getApplicationContext(), "Error extracting application assets!", Toast.LENGTH_SHORT);
-				toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
-				toast.show();
+				MetaioDebug.log(Log.ERROR, "Error extracting assets, closing the application...");
+				finish();
 			}
-			
-			finish();
 	    }
-		
 	}
+	
+	/**
+	 * Display a short toast message
+	 * @param message Message to display
+	 */
+	private void showToast(final String message)
+	{
+		Toast toast = Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT);
+		toast.show();
+	}
+	
+	
+	class WebViewHandler extends WebViewClient
+	{
+
+		@Override
+		public void onPageStarted(WebView view, String url, Bitmap favicon) 
+		{
+			mProgress.setVisibility(View.VISIBLE);
+		}
+	
+		@Override
+		public void onPageFinished(WebView view, String url) 
+		{
+			mProgress.setVisibility(View.GONE);
+		}
+	
+		@Override
+		public boolean shouldOverrideUrlLoading(WebView view, String url) 
+		{
+			if(url.toLowerCase().startsWith("interparallel://"))
+			{
+				StringBuilder sb =new StringBuilder("InterParallel");
+				String filename = sb.append(getChannelID(url)).append(ZIPFORMAT).toString();
+				String filepath = sb.insert(0, RES+"/").toString();
+				
+				//download the zip file
+				DownLoad dl = new DownLoad(SERVERINDEXURL+filepath);
+				DownLoadHandler handler = dl.new DownLoadHandler() {
+					
+					@Override
+					public void setSize(int size) {
+						// TODO Auto-generated method stub
+						
+					}
+					
+					@Override
+					public int downloadfinish() {
+						// TODO Auto-generated method stub
+						MetaioDebug.log("downloadfinish");
+						return 0;
+					}
+				};
+				dl.DownLoad2Local("/res", filename, handler);
+//				dl.DownLoad2Sd("./interparallel", filename, handler);				
+			}
+			else
+			{
+				return false;
+			}
+
+			return true;
+		}
+	
+	/**
+	 * Start a Native or AREL tutorial from local URL
+	 * @param url URL with prefix metaiosdkexample:// or metaiosdkexamplearel://
+	 */
+		private String getChannelID(final String url)
+		{
+			MetaioDebug.log("startTutorial: "+url);
+			String channelID = url.substring(url.lastIndexOf("=")+1);
+			if (channelID == null || channelID.length() == 0)
+			{
+				MetaioDebug.log(Log.ERROR, "Invalid tutorial URL: "+url);
+				showToast("Invalid tutorial URL: "+url);
+				return null;
+			}
+			MetaioDebug.log(channelID);
+			return channelID;
+		}
+	}
+
 	
 }
 

@@ -3,6 +3,7 @@ package com.metaio.sdk;
 
 import java.io.File;
 import java.util.Date;
+import java.net.URL;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -22,6 +23,7 @@ import com.metaio.sdk.jni.GestureHandler;
 import com.metaio.sdk.jni.IARELInterpreterCallback;
 import com.metaio.sdk.jni.IGeometry;
 import com.metaio.sdk.jni.IMetaioSDKCallback;
+import com.metaio.sdk.jni.PathOrURL;
 import com.metaio.sdk.jni.Vector3d;
 
 /**
@@ -248,7 +250,7 @@ public class ARELActivity extends ARViewActivity
 				{
 					MetaioDebug.log(Log.ERROR, "No AREL scene file passed to the intent");
 				}
-
+				
 				// TODO: set custom radar properties
 				mARELInterpreter.setRadarProperties(IGeometry.ANCHOR_TL, new Vector3d(0f), new Vector3d(1f));
 

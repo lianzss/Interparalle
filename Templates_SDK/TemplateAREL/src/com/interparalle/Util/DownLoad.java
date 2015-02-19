@@ -9,7 +9,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import android.app.Application;
 import android.os.Environment;
 import android.util.Log;
 
@@ -53,18 +52,7 @@ public class DownLoad {
 		this.stringurl =  url;
 		
 		//get the sd card enviroment
-		if(Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED)
-		{
-			this.sdcard = Environment.getExternalStorageDirectory()+"/";
-		}
-		else
-		{
-			Log.e(CLASS_FLAG,"SD card not ready!");
-			this.stringurl = null;
-			this.urlurl = null;
-			this.sdcard = null;
-			return;
-		}
+		this.sdcard = Environment.getExternalStorageDirectory()+"/";
 		
 		if(url.startsWith("http://"))
 		{
@@ -84,17 +72,7 @@ public class DownLoad {
 		this.urlurl =  url;
 		
 		//get the sd card enviroment
-		if(Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED)
-		{
-			this.sdcard = Environment.getExternalStorageDirectory()+"/";
-		}
-		else
-		{
-			Log.e(CLASS_FLAG,"SD card not ready!");
-			this.stringurl = null;
-			this.sdcard = null;
-			return;
-		}
+		this.sdcard = Environment.getExternalStorageDirectory()+"/";
 		
 		if(url.toString().startsWith("http://"))
 		{
@@ -159,7 +137,7 @@ public class DownLoad {
 	 * 
 	 * */
 	
-	public void DowLoad2Sd(String dir,String filename, DownLoadHandler handler)
+	public void DownLoad2Sd(String dir,String filename, DownLoadHandler handler)
 	{
 		
 		dirpath = sdcard+dir;
@@ -184,7 +162,7 @@ public class DownLoad {
 				}  
 				
 				//get the file handle
-				sb.append(savefilename);
+				sb.append("/"+savefilename);
 				file = new File(sb.toString());  
 				
 				FileOutputStream fos = null;  
@@ -214,6 +192,7 @@ public class DownLoad {
 					is.close();
 					downloadhandler.downloadfinish();
 				} catch (Exception e) {  
+					Log.e(CLASS_FLAG, e.toString());
 					return ;  
 				} finally {  
 					try {  
@@ -232,11 +211,12 @@ public class DownLoad {
 	/*download to local(not only in sd card)
 	 * NOTE: the dirpath must in the application dir, otherwise the system will forbit the operation
 	 * */
-	public void DowLoad2Local(String dir,String filename, DownLoadHandler handler)
+	public void DownLoad2Local(String dir,String filename, DownLoadHandler handler)
 	{
 		
 		dirpath = ContextUtil.getContext().getApplicationContext().getFilesDir()+dir;
 		savefilename = filename;
+		downloadhandler = handler;
 		DLthread = new Thread(new Runnable() {
 			
 			@Override
@@ -256,7 +236,7 @@ public class DownLoad {
 				}  
 				
 				//get the file handle
-				sb.append(savefilename);
+				sb.append("/"+savefilename);
 				file = new File(sb.toString());  
 				
 				FileOutputStream fos = null;  
@@ -269,12 +249,13 @@ public class DownLoad {
 					{							
 						if(file.createNewFile())
 						{
-							Log.d(CLASS_FLAG, "create "+sb.toString()+" successfully!");
+							Log.d(CLASS_FLAG, "create "+file.toString()+" successfully!");
 						}else
 						{
-							Log.e(CLASS_FLAG, "create "+sb.toString()+" failed!");
+							Log.e(CLASS_FLAG, "create "+file.toString()+" failed!");
 						}
 					}
+
 					
 					fos = new FileOutputStream(file);  
 					byte[] buf = new byte[1024];  
@@ -286,6 +267,8 @@ public class DownLoad {
 					is.close();
 					downloadhandler.downloadfinish();
 				} catch (Exception e) {  
+					Log.e(CLASS_FLAG, e.toString());
+					Log.e(CLASS_FLAG, e.getMessage());
 					return ;  
 				} finally {  
 					try {  

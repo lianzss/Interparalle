@@ -62,11 +62,11 @@ public final class R {
 		public static final int actionButton = 0x7f070007;
 		public static final int audioButton = 0x7f070002;
 		public static final int buttonClose = 0x7f070008;
-		public static final int buttonShare = 0x7f070018;
-		public static final int buttonWebBack = 0x7f070019;
-		public static final int buttonWebForward = 0x7f07001c;
-		public static final int buttonWebReload = 0x7f07001b;
-		public static final int buttonWebStop = 0x7f07001a;
+		public static final int buttonShare = 0x7f07001a;
+		public static final int buttonWebBack = 0x7f07001b;
+		public static final int buttonWebForward = 0x7f07001e;
+		public static final int buttonWebReload = 0x7f07001d;
+		public static final int buttonWebStop = 0x7f07001c;
 		public static final int callButton = 0x7f070005;
 		public static final int collapsible = 0x7f070011;
 		public static final int emailButton = 0x7f070006;
@@ -78,7 +78,7 @@ public final class R {
 		public static final int includeChannelBadge = 0x7f070013;
 		public static final int layoutRotated = 0x7f07000b;
 		public static final int poidetailfragment = 0x7f07000a;
-		public static final int progressBar = 0x7f070015;
+		public static final int progressBar = 0x7f070018;
 		public static final int ratingbar = 0x7f07000f;
 		public static final int root = 0x7f070016;
 		public static final int routeButton = 0x7f070004;
@@ -86,8 +86,8 @@ public final class R {
 		public static final int textPOILocation = 0x7f070010;
 		public static final int textPOIName = 0x7f07000e;
 		public static final int videoButton = 0x7f070003;
-		public static final int webBottomBar = 0x7f070017;
-		public static final int webView = 0x7f070014;
+		public static final int webBottomBar = 0x7f070019;
+		public static final int webView = 0x7f070017;
 	}
 	public static final class layout {
 		public static final int button_action_detail = 0x7f030000;
