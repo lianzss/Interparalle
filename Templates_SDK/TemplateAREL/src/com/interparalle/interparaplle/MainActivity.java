@@ -11,6 +11,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -27,6 +28,7 @@ import com.metaio.tools.io.AssetsManager;
 import com.interparalle.Util.DownLoad;
 import com.interparalle.Util.ContextUtil;
 import com.interparalle.Util.DownLoad.DownLoadHandler;
+import com.interparalle.Util.Zip;
 
 public class MainActivity extends Activity
 {
@@ -122,6 +124,15 @@ public class MainActivity extends Activity
 		protected void onPostExecute(Boolean result) 
 		{
 			mProgress.setVisibility(View.GONE);
+			Zip zip = new Zip();
+			try
+			{
+				zip.Unzip(Environment.getExternalStorageDirectory()+"/InterParallelHelloWorld.zip", 
+						Environment.getExternalStorageDirectory()+"/interparallel");
+			}catch(Exception e)
+			{
+				
+			}
 			
 			if (result)
 			{				
@@ -177,26 +188,41 @@ public class MainActivity extends Activity
 				StringBuilder sb =new StringBuilder("InterParallel");
 				String filename = sb.append(getChannelID(url)).append(ZIPFORMAT).toString();
 				String filepath = sb.insert(0, RES+"/").toString();
+//				String filename = "metaioman.png";
+//				String filepath = "./res/"+filename;
 				
 				//download the zip file
+				Log.d("test",SERVERINDEXURL+filepath);
 				DownLoad dl = new DownLoad(SERVERINDEXURL+filepath);
 				DownLoadHandler handler = dl.new DownLoadHandler() {
 					
 					@Override
 					public void setSize(int size) {
 						// TODO Auto-generated method stub
+						Log.d("test", size+"");
 						
 					}
 					
 					@Override
-					public int downloadfinish() {
+					public int downloadfinish(String filename) {
 						// TODO Auto-generated method stub
 						MetaioDebug.log("downloadfinish");
+						Zip zip = new Zip();
+						try
+						{
+							zip.Unzip(filename,"./");
+						}catch(Exception e)
+						{
+							e.printStackTrace();
+							Log.d("log", e.getMessage());
+						}
 						return 0;
 					}
 				};
-				dl.DownLoad2Local("/res", filename, handler);
-//				dl.DownLoad2Sd("./interparallel", filename, handler);				
+//				dl.DownLoad2Local("/res", filename, handler);
+//				Log.d("test", dl.DownLoadAsString());
+//				dl.DownLoad2Local("/res", "metaioman.png", handler);
+				dl.DownLoad2Sd("./interparallel", filename, handler);				
 			}
 			else
 			{
